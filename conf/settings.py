@@ -184,9 +184,7 @@ CSRF_TRUSTED_ORIGINS = tuple(env.list("CSRF_TRUSTED_ORIGINS"))
 
 REST_FRAMEWORK = {
     # Pagination
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE_QUERY_PARAM": "page_size",
-    "PAGE_SIZE_LIMIT_DEFAULT": 10,
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.DefaultPagination",
     # Schema config
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # API Versioning
