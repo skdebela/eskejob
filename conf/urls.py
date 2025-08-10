@@ -10,6 +10,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     re_path(r"^api/(?P<version>v[0-9]+)/", include("users.urls")),
     re_path(r"^api/(?P<version>v[0-9]+)/", include("jobs.urls")),
+    re_path(r"^api/(?P<version>v[0-9]+)/", include("applications.urls")),
     # Documentation
     re_path(
         r"^api/(?P<version>v[0-9]+)/schema$",
