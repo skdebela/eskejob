@@ -46,9 +46,13 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "corsheaders",
+    "drf_spectacular",
+    "rest_framework",
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "core",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -133,3 +137,35 @@ SESSION_COOKIE_SAMESITE = env.str("SESSION_COOKIE_SAMESITE", "None")
 SESSION_COOKIE_SECURE = env.bool("SESSION_COOKIE_SECURE", True)
 CORS_ALLOWED_ORIGINS = tuple(env.list("CORS_ALLOWED_ORIGINS"))
 CSRF_TRUSTED_ORIGINS = tuple(env.list("CSRF_TRUSTED_ORIGINS"))
+
+
+REST_FRAMEWORK = {
+    # Pagination
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE_QUERY_PARAM": "page_size",
+    "PAGE_SIZE_LIMIT_DEFAULT": 10,
+    # Schema config
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # API Versioning
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSION": env.str("API_DEFAULT_VERSION", default="v1"),
+    "ALLOWED_VERSIONS": env.list("API_ALLOWED_VERSIONS", default=["v1"]),
+    # Responses handling
+    "DEFAULT_RENDERER_CLASSES": [
+        "core.renderers.JSONRenderer",
+    ],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "eskajob API",
+    "DESCRIPTION": "API documentation for eskejob backend.",
+    "VERSION": env.str("API_DOCUMENTATION_VERSION", default="1.0.0"),
+    "SCHEMA_PATH_PREFIX": "/api/v[0-g]+",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "POSTPROCESSING_HOOKS": ["core.hooks.response_format_hook"],
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "persistAuthorization": True,
+    },
+}
