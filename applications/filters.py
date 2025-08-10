@@ -6,10 +6,6 @@ from users.models import User
 
 
 class ApplicationFilter(filters.FilterSet):
-    class Meta:
-        model = Application
-        fields = []
-
     application_status = filters.ChoiceFilter(
         field_name="status",
         help_text="Filter by status",
@@ -26,3 +22,7 @@ class ApplicationFilter(filters.FilterSet):
         to_field_name="id",
         queryset=User.objects.filter(role="company"),
     )
+
+    class Meta:
+        model = Application
+        fields = []
