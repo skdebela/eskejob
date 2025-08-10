@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from djoser import serializers as djoser_serializers
-from rest_framework import serializers
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer as BaseTokenObtainPairSerializer,
 )
@@ -28,8 +27,6 @@ class UserCreateSerializer(djoser_serializers.UserCreateSerializer):
 
 
 class UserSerializer(djoser_serializers.UserSerializer):
-    role = serializers.SerializerMethodField()
-
     class Meta:
         model = User
         fields = [
