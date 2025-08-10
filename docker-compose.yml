@@ -1,0 +1,74 @@
+services:
+  backend:
+    build: .
+    container_name: eskejob_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - maildev
+      - minio
+    networks:
+      - eskejob
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17
+    container_name: eskejob_postgres
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=user
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - eskejob
+    restart: unless-stopped
+
+  maildev:
+    image: maildev/maildev:2.2.1
+    container_name: eskejob_maildev
+    environment:
+      - TZ=Asia/Shanghai
+      - MAILDEV_WEB_PORT=1080
+      - MAILDEV_SMTP_PORT=1025
+    ports:
+      - "8080:1080"
+      - "8025:1025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+    networks:
+      - eskejob
+    restart: always
+
+  minio:
+    image: minio/minio
+    container_name: eskejob_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    networks:
+      - eskejob
+
+
+volumes:
+  postgres:
+  pgadmin:
+  minio:
+
+networks:
+  eskejob:
+    driver: bridge
