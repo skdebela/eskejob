@@ -1,4 +1,5 @@
 from drf_spectacular.utils import OpenApiParameter, extend_schema
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.viewsets import ModelViewSet
 
 from applications.filters import ApplicationFilter
@@ -9,6 +10,7 @@ from applications.serializers import ApplicationSerializer
 class ApplicationViewSet(ModelViewSet):
     queryset = Application.objects.all()
     serializer_class = ApplicationSerializer
+    parser_classes = [JSONParser, FormParser, MultiPartParser]
     search_fields = ["job__name", "job__created_by__full_name"]
     filterset_class = ApplicationFilter
     ordering_fields = [
