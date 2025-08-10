@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -48,10 +49,12 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "rest_framework",
+    "django_filters",
 ]
 
 LOCAL_APPS = [
     "core",
+    "users",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -154,6 +157,10 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "core.renderers.JSONRenderer",
     ],
+    # Auth
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
 }
 
 SPECTACULAR_SETTINGS = {
@@ -169,3 +176,36 @@ SPECTACULAR_SETTINGS = {
         "persistAuthorization": True,
     },
 }
+
+AUTH_USER_MODEL = "users.User"
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "TOKEN_OBTAIN_SERIALIZER": "users.serializers.TokenObtainPairSerializer",
+}
+DOMAIN = env.str("DOMAIN", "eskejob.com")
+SITE_NAME = "eskejob"
+SITE_ID = env.int("SITE_ID", default=1)
+
+EMAIL_BACKEND = (
+    f"django.core.mail.backends.{env.str('EMAIL_BACKEND', default='smtp')}.EmailBackend"
+)
+EMAIL_HOST = env.str("EMAIL_HOST")
+EMAIL_PORT = env.int("EMAIL_PORT", default=25)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+
+DJOSER = {
+    "SEND_ACTIVATION_EMAIL": True,
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "password/reset/confirm/{uid}/{token}",
+    "SERIALIZERS": {
+        "current_user": "users.serializers.UserSerializer",
+        "user": "users.serializers.UserSerializer",
+        "user_create": "users.serializers.UserCreateSerializer",
+    },
+}
+
+AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
